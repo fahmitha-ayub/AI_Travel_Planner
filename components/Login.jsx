@@ -1,8 +1,11 @@
-import { View, Text, StyleSheet,Image} from 'react-native'
-import Colors from './../constants/Colors'
+import { View, Text, StyleSheet,Image,TouchableOpacity} from 'react-native'
+import Colors from '@/constants/Colors'
 import React from 'react'
+import { useRouter } from 'expo-router'
+
 
 export default function Login() {
+  const router=useRouter();
   return (
     <View>
       <Image source={require('../assets/images/login.jpeg')} 
@@ -26,14 +29,15 @@ export default function Login() {
                 fontFamily:'outfit'
                 }}>Welcome to your personal Travel Planner! This app helps you seamlessly organize your trips by providing easy access to schedules, routes, and essential details for your journeys.
                 Let’s get started and make travel stress-free!</Text>
-              <View style={styles.button}>
+              <TouchableOpacity style={styles.button}
+                onPress={()=>router.push('/auth/sign-in')}>
                 <Text style={{color:'#fff',
                   textAlign:'center',
                   fontSize:20,
                   fontFamily:'outfit'
                 }}>
                 Sign In With Google</Text>
-              </View>
+              </TouchableOpacity>
         
         </View>
     </View>
