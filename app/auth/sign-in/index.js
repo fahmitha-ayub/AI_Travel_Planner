@@ -1,17 +1,44 @@
 import { useRouter } from 'expo-router';
 import { useNavigation } from 'expo-router'
-import React, { Component, useEffect} from 'react'
+import React, { Component, useEffect,useState} from 'react'
 import { Text, View,TextInput,StyleSheet,TouchableOpacity } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../../configs/FirebaseConfig';
 
 export default function SignIn() {
   const navigation=useNavigation();
   const router=useRouter();
+
+  const[email,setEmail]=useState('');
+  const[password,setPassword]=useState('');
+  
   useEffect(() => {
     navigation.setOptions({
       headerShown:false
     })
   })
+    const onSignIn=()=>{  
+
+      if(!email && !password &&!fullName)
+        {
+          ToastAndroid.show('Please fill all the fields',ToastAndroid.BOTTOM);
+          return;
+        }
+    
+      signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        console.log(user);
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorMessage,errorCode);
+      });}
+    
     return (
       <View style={{
         marginTop:30, 
@@ -42,17 +69,21 @@ export default function SignIn() {
             Email
           </Text>
           <TextInput placeholder="Enter your email" 
-            style={styles.textbox}/>
+            style={styles.textbox}
+            onChangeText={value=>setEmail(value)}/>
           <Text style={styles.text}>Password
           </Text>
           <TextInput 
             secureTextEntry={true}
             placeholder="Password" 
-            style={styles.textbox}/>
+            style={styles.textbox}
+            onChangeText={value=>setPassword(value)}
+            />
         </View>
         <TouchableOpacity 
           
-        style={styles.button}>
+        style={styles.button}
+        onPress={onSignIn}>
           <Text style={{
             color:'#fff',
             textAlign:'center',
