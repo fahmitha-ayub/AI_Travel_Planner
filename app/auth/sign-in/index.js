@@ -20,9 +20,9 @@ export default function SignIn() {
   })
     const onSignIn=()=>{  
 
-      if(!email && !password &&!fullName)
+      if(!email && !password)
         {
-          ToastAndroid.show('Please fill all the fields',ToastAndroid.BOTTOM);
+          ToastAndroid.show('Please fill all the fields',ToastAndroid.SHORT);
           return;
         }
     
@@ -31,13 +31,18 @@ export default function SignIn() {
         // Signed in 
         const user = userCredential.user;
         console.log(user);
+        user && router.replace('/screens/homeScreen');
         // ...
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorMessage,errorCode);
-      });}
+      }
+    
+    )
+    // .finally(()=>{if user})
+    ;} 
     
     return (
       <View style={{
@@ -70,14 +75,14 @@ export default function SignIn() {
           </Text>
           <TextInput placeholder="Enter your email" 
             style={styles.textbox}
-            onChangeText={value=>setEmail(value)}/>
+            onChangeText={(value)=>setEmail(value)}/>
           <Text style={styles.text}>Password
           </Text>
           <TextInput 
             secureTextEntry={true}
             placeholder="Password" 
             style={styles.textbox}
-            onChangeText={value=>setPassword(value)}
+            onChangeText={(value)=>setPassword(value)}
             />
         </View>
         <TouchableOpacity 
