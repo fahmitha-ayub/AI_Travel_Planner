@@ -1,0 +1,64 @@
+m#d_-58LzAyjX#.
+https://nazutabsfswgvnguiizo.supabase.co
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5henV0YWJzZnN3Z3ZuZ3VpaXpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgwNjgzNjksImV4cCI6MjA0MzY0NDM2OX0.otv_aCXlA3U6XAKbBuxkWQMHhPopAKf3k8fnxxHzrLE
+
+
+
+import { View, Text, } from 'react-native'
+import React, { useState } from 'react'
+import { TextInput, TouchableOpacity } from 'react-native'
+import { Button, FlatList, StyleSheet } from 'react-native-web'
+import { fetchTrains} from '../database'
+
+export default function homeScreen() {
+//     const [start, setStart] = useState('');
+//     const [end, setEnd] = useState('');
+//     const [trains, setTrains] = useState([]);
+
+//     const handleSearch = () => {
+//         fetchTrains(start, end, (fetchedTrains) => {
+//           setTrains(fetchedTrains);
+//         });
+//       };
+   
+  return (
+    <View>
+      <Text>Welcome! Plan your trip here</Text>
+      <View>
+        <TouchableOpacity>
+            <Text>Start</Text>
+            <TextInput placeholder="Enter your Startlocation" 
+            style={styles.textbox}
+            onChangeText={(value)=>console.log(value)}/>
+        </TouchableOpacity>       
+        <TouchableOpacity>
+            <Text>Destination</Text>
+            <TextInput placeholder="Enter your Destination" 
+            style={styles.textbox}
+            onChangeText={(value)=>console.log(value)}
+             />
+        </TouchableOpacity>
+        <Button title="submit"/>
+        
+      </View>
+
+      {/* <FlatList
+        data={trains}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <Text>{`Train from ${item.start} to ${item.end}`}</Text>
+        )}
+      /> */}
+    </View>
+  )
+}
+const styles=StyleSheet.create({  
+    textbox:{
+      padding:10,
+      borderWidth:1,
+      width:350,
+      borderColor:'black',
+      borderRadius:5,
+      marginBottom:10,
+    }
+})

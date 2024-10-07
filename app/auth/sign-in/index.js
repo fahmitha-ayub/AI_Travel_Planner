@@ -71,13 +71,11 @@ export default function SignIn() {
 
         }}>
           <Text style={styles.text}>
-            Email
-          </Text>
+            Email</Text>
           <TextInput placeholder="Enter your email" 
             style={styles.textbox}
             onChangeText={(value)=>setEmail(value)}/>
-          <Text style={styles.text}>Password
-          </Text>
+          <Text style={styles.text}>Password</Text>
           <TextInput 
             secureTextEntry={true}
             placeholder="Password" 
