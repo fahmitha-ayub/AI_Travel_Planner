@@ -1,5 +1,6 @@
 import { View } from "react-native";
 import Login from "./../components/Login";
+import React from "react";
 //import {init} from './database'
 import { useEffect } from "react";
 export default function Index() {

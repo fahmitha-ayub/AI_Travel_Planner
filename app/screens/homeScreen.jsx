@@ -51,17 +51,20 @@ export default function HomeScreen() {
       {loading ? (
                 <Text>Loading...</Text>
             ) : (
-                <FlatList
-                    data={trains}
-                    keyExtractor={(item) => item.train_id.toString()}
-                    renderItem={({ item }) => (
-                        <View >
-                            <Text>{`Train from ${item.origin} to ${item.destination}`}</Text>
-                            <Text>{`Departure Time: ${item.time}`}</Text>
-                        </View>
-                    )}
-                    ListEmptyComponent={<Text>No trains found.</Text>}
-                />
+              <FlatList
+              data={trains}
+              keyExtractor={(item) => item.train_id.toString()}
+              renderItem={({ item }) => (
+                  <View style={styles.tableRow}>
+                      <Text style={styles.cell}>{item.train_id}</Text>
+                      <Text style={styles.cell}>{item.origin}</Text>
+                      <Text style={styles.cell}>{item.destination}</Text>
+                      <Text style={styles.cell}>{item.distance}</Text>
+                      <Text style={styles.cell}>{item.route_duration}</Text>
+                  </View>
+              )}
+              ListEmptyComponent={<Text>No trains found.</Text>}
+          />
             )}
       {/* <FlatList
         data={trains}
