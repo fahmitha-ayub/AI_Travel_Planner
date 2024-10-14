@@ -2,8 +2,6 @@ import { View, Text, StyleSheet,Image,TouchableOpacity, ImageBackground} from 'r
 import Colors from '@/constants/Colors'
 import React from 'react'
 import { useRouter } from 'expo-router'
-
-
 export default function Login() {
   const router=useRouter();
   return (
