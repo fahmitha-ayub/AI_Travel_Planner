@@ -3,7 +3,8 @@ import React from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../supabaseClient';
-
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 export default function Booking() {
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -17,13 +18,16 @@ export default function Booking() {
     }
 
     try {
+      const bookingDate = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      const bookingId = uuidv4();
       const { data, error } = await supabase.rpc('create_booking', {
         p_user_email: user.email,
+        p_booking_id: bookingId,
         p_train_id: trainDetails.train_id,
-        p_origin: trainDetails.origin, 
         p_destination: trainDetails.destination,
-        p_booking_date: new Date().toISOString(),
-        p_status: 'confirmed'
+        p_booking_date: bookingDate,
+        p_status: 'confirmed',
+        p_origin: trainDetails.origin
       });
 
       if (error) throw error;
