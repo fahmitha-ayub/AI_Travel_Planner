@@ -14,7 +14,12 @@ export default function Train() {
   useEffect(() => {
     getalltrains();
   }, []);
-
+const bookNow = (item) => {
+  router.push({
+    pathname: '/screens/booking',
+    params: { traindetails: JSON.stringify(item) }
+  });
+};
   const getalltrains = async () => {
     const { data, error } = await supabase.rpc('get_all_trains');
     if (error) {
@@ -52,7 +57,7 @@ export default function Train() {
       <View style={styles.trainFooter}>
         <Text style={styles.trainDistance}>{item.distance} km</Text>
         <TouchableOpacity style={styles.bookButton}>
-          <Text style={styles.bookButtonText}>Book Now</Text>
+          <Text style={styles.bookButtonText} onPress={() => bookNow(item)} >Book Now</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

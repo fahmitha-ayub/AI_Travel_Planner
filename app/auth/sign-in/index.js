@@ -4,6 +4,7 @@ import { useRouter, useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../configs/FirebaseConfig';
+import { useAuth } from '../../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -12,6 +13,7 @@ export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { updateUser } = useAuth();
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -26,8 +28,12 @@ export default function SignIn() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(user);
-        user && router.replace('/screens/homeScreen');
+        updateUser({
+          id: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+        });
+        router.replace('/screens/homeScreen');
       })
       .catch((error) => {
         console.log(error.message, error.code);
