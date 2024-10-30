@@ -8,7 +8,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/forest2.jpg",
+      "image": "./assets/images/train_spee.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/pales.jpg",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.fahmieve.trainPlanner"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "40f23ee5-a60e-4922-b5f5-5d7f8bc08dd8"
+      }
     }
   }
 }
