@@ -4,10 +4,13 @@ import {
   Text, 
   StyleSheet, 
   FlatList, 
-  ActivityIndicator 
+  ActivityIndicator,
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 import { supabase } from '../supabaseClient';
 import { getAuth } from 'firebase/auth';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
@@ -39,16 +42,57 @@ export default function MyBookings() {
     }
   };
 
+  const handleDeleteBooking = async (bookingId) => {
+    Alert.alert(
+      'Cancel Booking',
+      'Are you sure you want to cancel this booking?',
+      [
+        {
+          text: 'No',
+          style: 'cancel'
+        },
+        {
+          text: 'Yes, Cancel',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setLoading(true);
+              const auth = getAuth();
+              const currentUser = auth.currentUser;
+
+              const { error } = await supabase.rpc('delete_booking', {
+                p_booking_id: bookingId,
+                p_user_email: currentUser.email
+              });
+
+              if (error) throw error;
+
+              // Refresh the bookings list
+              fetchBookings();
+              Alert.alert('Success', 'Booking cancelled successfully');
+              
+            } catch (error) {
+              console.error('Delete error:', error);
+              Alert.alert('Error', 'Failed to cancel booking');
+            } finally {
+              setLoading(false);
+            }
+          }
+        }
+      ]
+    );
+  };
+
   const renderBooking = ({ item }) => (
     <View style={styles.bookingCard}>
       <View style={styles.bookingHeader}>
         <Text style={styles.bookingId}>Booking ID: {item.booking_id}</Text>
-        <Text style={[
-          styles.status,
-          { color: item.status === 'confirmed' ? '#4CAF50' : '#F44336' }
-        ]}>
-          {item.status}
-        </Text>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => handleDeleteBooking(item.booking_id)}
+        >
+          <Ionicons name="trash-outline" size={24} color="#ff4444" />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.routeContainer}>
@@ -177,5 +221,8 @@ const styles = StyleSheet.create({
     color: '#666',
     fontSize: 16,
     marginTop: 20,
-  }
+  },
+  deleteButton: {
+    marginLeft: 10,
+  },
 }); 

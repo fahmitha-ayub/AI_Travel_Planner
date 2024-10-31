@@ -161,12 +161,12 @@ export default function HomeScreen() {
             subtitle="Book train tickets"
             onPress={() => router.push('/screens/train')}
           />
-          <TravelOption 
+          {/* <TravelOption 
             icon="bus-outline"
             title="Bus"
             subtitle="Book bus tickets"
             onPress={() => router.push('/screens/bus')}
-          />
+          /> */}
           <TravelOption 
             icon="business-outline"
             title="Stations"
