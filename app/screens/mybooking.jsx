@@ -42,7 +42,7 @@ export default function MyBookings() {
     }
   };
 
-  const handleDeleteBooking = async (bookingId) => {
+  const handleDeleteBooking = async (booking) => {
     Alert.alert(
       'Cancel Booking',
       'Are you sure you want to cancel this booking?',
@@ -60,12 +60,23 @@ export default function MyBookings() {
               const auth = getAuth();
               const currentUser = auth.currentUser;
 
+              // First delete the booking
               const { error } = await supabase.rpc('delete_booking', {
-                p_booking_id: bookingId,
+                p_booking_id: booking.booking_id,
                 p_user_email: currentUser.email
               });
 
               if (error) throw error;
+
+              // Then increase the seats after successful deletion
+              const { data: seatsData, error: seatsError } = await supabase
+                .rpc('seat_ondelete', {
+                  p_trainid: booking.train_id,
+                  p_origin:booking.origin,
+                  p_dest:booking.destination
+                }); 
+
+              if (seatsError) throw seatsError;
 
               // Refresh the bookings list
               fetchBookings();
@@ -83,43 +94,45 @@ export default function MyBookings() {
     );
   };
 
-  const renderBooking = ({ item }) => (
-    <View style={styles.bookingCard}>
-      <View style={styles.bookingHeader}>
-        <Text style={styles.bookingId}>Booking ID: {item.booking_id}</Text>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => handleDeleteBooking(item.booking_id)}
-        >
-          <Ionicons name="trash-outline" size={24} color="#ff4444" />
-        </TouchableOpacity>
-      </View>
+  const renderBooking = ({ item }) => {
+    return (
+      <View style={styles.bookingCard}>
+        <View style={styles.bookingHeader}>
+          <Text style={styles.bookingId}>Booking ID: {item.booking_id}</Text>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => handleDeleteBooking(item)}
+          >
+            <Ionicons name="trash-outline" size={24} color="#ff4444" />
+          </TouchableOpacity>
+        </View>
 
-      <View style={styles.routeContainer}>
-        <View style={styles.routeInfo}>
-          <Text style={styles.label}>From</Text>
-          <Text style={styles.value}>{item.origin}</Text>
+        <View style={styles.routeContainer}>
+          <View style={styles.routeInfo}>
+            <Text style={styles.label}>From</Text>
+            <Text style={styles.value}>{item.origin}</Text>
+          </View>
+          <View style={styles.routeInfo}>
+            <Text style={styles.label}>To</Text>
+            <Text style={styles.value}>{item.destination}</Text>
+          </View>
         </View>
-        <View style={styles.routeInfo}>
-          <Text style={styles.label}>To</Text>
-          <Text style={styles.value}>{item.destination}</Text>
-        </View>
-      </View>
 
-      <View style={styles.detailsContainer}>
-        <View style={styles.detailItem}>
-          <Text style={styles.label}>Train ID</Text>
-          <Text style={styles.value}>{item.train_id}</Text>
-        </View>
-        <View style={styles.detailItem}>
-          <Text style={styles.label}>Date</Text>
-          <Text style={styles.value}>
-            {new Date(item.booking_date).toLocaleDateString()}
-          </Text>
+        <View style={styles.detailsContainer}>
+          <View style={styles.detailItem}>
+            <Text style={styles.label}>Train ID</Text>
+            <Text style={styles.value}>{item.train_id}</Text>
+          </View>
+          <View style={styles.detailItem}>
+            <Text style={styles.label}>Date</Text>
+            <Text style={styles.value}>
+              {new Date(item.booking_date).toLocaleDateString()}
+            </Text>
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   if (loading) {
     return (

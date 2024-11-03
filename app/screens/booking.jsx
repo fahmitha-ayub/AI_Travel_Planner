@@ -63,10 +63,12 @@ export default function Booking() {
         p_user_email: user.email,
         p_booking_id: bookingId,
         p_train_id: trainDetails.train_id,
+        p_route_id: trainDetails.route_id,
         p_destination: trainDetails.destination,
         p_booking_date: bookingDate,
         p_status: 'confirmed',
         p_origin: trainDetails.origin
+
       });
 
       if (error) throw error;
@@ -84,6 +86,7 @@ export default function Booking() {
 
     } catch (error) {
       Alert.alert('Error', error.message);
+      console.log(error.message);
     }
   };
 
@@ -128,6 +131,14 @@ export default function Booking() {
         <View style={styles.row}>
           <Text style={styles.label}>Distance:</Text>
           <Text style={styles.value}>{trainDetails.distance} km</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Arrival:</Text>
+          <Text style={styles.value}>{trainDetails.arrival_time} </Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Departure:</Text>
+          <Text style={styles.value}>{trainDetails.departure_time} </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Amount:</Text>

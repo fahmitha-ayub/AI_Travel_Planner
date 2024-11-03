@@ -157,7 +157,7 @@ export default function HomeScreen() {
         <View style={styles.optionsContainer}>
           <TravelOption 
             icon="train-outline"
-            title="Train"
+            title="Book Train"
             subtitle="Book train tickets"
             onPress={() => router.push('/screens/train')}
           />

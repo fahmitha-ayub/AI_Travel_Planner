@@ -14,6 +14,13 @@ export default function Train() {
   useEffect(() => {
     getalltrains();
   }, []);
+
+const trainDetails = (item) => {
+  router.push({
+    pathname: '/screens/booking',
+    params: { traindetails: JSON.stringify(item) }
+  });
+};
 const bookNow = (item) => {
   router.push({
     pathname: '/screens/booking',
@@ -58,7 +65,7 @@ const bookNow = (item) => {
   //   }
   // }
   const renderTrainItem = ({ item }) => (
-    <TouchableOpacity style={styles.trainCard} onPress={() => router.push('/screens/booking')}>
+    <TouchableOpacity style={styles.trainCard} onPress={() => trainDetails(item)}>
       <View style={styles.trainHeader}>
         <Text style={styles.trainId}>{item.train_id}</Text>
         <Text style={styles.trainId}>{item.no_seats}</Text>
