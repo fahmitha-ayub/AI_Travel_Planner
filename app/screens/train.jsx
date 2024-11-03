@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Activity
 import { useRouter } from 'expo-router';
 import { supabase } from '../supabaseClient';
 import { Feather } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
 
 export default function Train() {
   const router = useRouter();
@@ -10,23 +11,27 @@ export default function Train() {
   const [end, setEnd] = useState('');
   const [trains, setTrains] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [locations, setLocations] = useState([]);
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
 
   useEffect(() => {
     getalltrains();
+    fetchLocations();
   }, []);
 
-const trainDetails = (item) => {
-  router.push({
-    pathname: '/screens/booking',
-    params: { traindetails: JSON.stringify(item) }
-  });
-};
-const bookNow = (item) => {
-  router.push({
-    pathname: '/screens/booking',
-    params: { traindetails: JSON.stringify(item) }
-  });
-};
+  const trainDetails = (item) => {
+    router.push({
+      pathname: '/screens/booking',
+      params: { traindetails: JSON.stringify(item) }
+    });
+  };
+  const bookNow = (item) => {
+    router.push({
+      pathname: '/screens/booking',
+      params: { traindetails: JSON.stringify(item) }
+    });
+  };
   const getalltrains = async () => {
     const { data, error } = await supabase.rpc('get_all_trains');
     if (error) {
@@ -49,21 +54,18 @@ const bookNow = (item) => {
     }
     setLoading(false);
   };
-  // const trainDetails = async (item) => {
-  //   const { data, error } = await supabase.rpc('get_train_details', {
-  //     train_id: item.train_id,
-  //     train_name: item.train_name,
-  //     train_type: item.train_type,
-  //     train_stationid: item.train_station_id,
-  //     train_fare: item.train_fare
-  //   });
 
-  //   if (error) {
-  //     console.error('Error fetching train details:', error.message);
-  //   } else {
-  //     console.log('Train details fetched successfully:', data);
-  //   }
-  // }
+  const fetchLocations = async () => {
+    try {
+      const { data, error } = await supabase.rpc('get_available_locations');
+      if (error) throw error;
+      
+      setLocations(data || []);
+    } catch (error) {
+      console.error('Error fetching locations:', error.message);
+    }
+  };
+
   const renderTrainItem = ({ item }) => (
     <TouchableOpacity style={styles.trainCard} onPress={() => trainDetails(item)}>
       <View style={styles.trainHeader}>
@@ -93,22 +95,72 @@ const bookNow = (item) => {
       <View style={styles.searchContainer}>
         <View style={styles.inputContainer}>
           <Feather name="map-pin" size={20} color="#555" style={styles.inputIcon} />
-          <TextInput
-            placeholder="Enter your Start location"
-            style={styles.input}
-            onChangeText={setStart}
-            value={start}
-          />
+          <TouchableOpacity 
+            style={styles.pickerTouchable}
+            onPress={() => setShowStartPicker(!showStartPicker)}
+          >
+            <Text style={styles.pickerText}>
+              {start || "Select Start Location"}
+            </Text>
+          </TouchableOpacity>
         </View>
+        
+        {showStartPicker && (
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={start}
+              onValueChange={(itemValue) => {
+                setStart(itemValue);
+                setShowStartPicker(false);
+              }}
+              style={styles.picker}
+            >
+              <Picker.Item label="Select Start Location" value="" />
+              {locations.map((location, index) => (
+  <Picker.Item 
+    key={`${location.origin}-${index}`} // Combine origin with index for uniqueness
+    label={location.origin} 
+    value={location.origin} 
+  />
+))}
+            </Picker>
+          </View>
+        )}
+
         <View style={styles.inputContainer}>
           <Feather name="flag" size={20} color="#555" style={styles.inputIcon} />
-          <TextInput
-            placeholder="Enter your Destination"
-            style={styles.input}
-            onChangeText={setEnd}
-            value={end}
-          />
+          <TouchableOpacity 
+            style={styles.pickerTouchable}
+            onPress={() => setShowEndPicker(!showEndPicker)}
+          >
+            <Text style={styles.pickerText}>
+              {end || "Select Destination"}
+            </Text>
+          </TouchableOpacity>
         </View>
+
+        {showEndPicker && (
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={end}
+              onValueChange={(itemValue) => {
+                setEnd(itemValue);
+                setShowEndPicker(false);
+              }}
+              style={styles.picker}
+            >
+              <Picker.Item label="Select Destination" value="" />
+              {locations.map((location) => (
+                <Picker.Item 
+                  key={location.destination} 
+                  label={location.destination} 
+                  value={location.destination} 
+                />
+              ))}
+            </Picker>
+          </View>
+        )}
+
         <TouchableOpacity style={styles.searchButton} onPress={fetchTrains}>
           <Text style={styles.searchButtonText}>Find Trains</Text>
         </TouchableOpacity>
@@ -118,12 +170,12 @@ const bookNow = (item) => {
         <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
       ) : (
         <FlatList
-          data={trains}
-          renderItem={renderTrainItem}
-          keyExtractor={(item) => item.train_id.toString()}
-          ListEmptyComponent={<Text style={styles.noTrains}>No trains found.</Text>}
-          contentContainerStyle={styles.listContainer}
-        />
+        data={trains}
+        renderItem={renderTrainItem}
+        keyExtractor={(item) => `${item.train_id}-${item.origin}`} // Combine train_id with origin for uniqueness
+        ListEmptyComponent={<Text style={styles.noTrains}>No trains found.</Text>}
+        contentContainerStyle={styles.listContainer}
+      />
       )}
     </View>
   );
@@ -238,5 +290,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginTop: 20,
+  },
+  pickerTouchable: {
+    flex: 1,
+    padding: 10,
+    justifyContent: 'center',
+  },
+  pickerText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  pickerContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
 });
