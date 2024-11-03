@@ -11,6 +11,8 @@ import {
 import { supabase } from '../supabaseClient';
 import { getAuth } from 'firebase/auth';
 import { Ionicons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
@@ -95,41 +97,65 @@ export default function MyBookings() {
   };
 
   const renderBooking = ({ item }) => {
+    const bookingDate = new Date(item.booking_date).toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+
     return (
       <View style={styles.bookingCard}>
+        {/* Booking Status Banner */}
+        <View style={[styles.statusBanner, { backgroundColor: item.status !== 'Confirmed' ? '#e8f5e9' : '#fff3e0' }]}>
+          <Text style={[styles.statusText, { color: item.status !== 'Confirmed' ? '#2e7d32' : '#f57c00' }]}>
+            {item.status}
+          </Text>
+        </View>
+
+        {/* Booking Details Header */}
         <View style={styles.bookingHeader}>
-          <Text style={styles.bookingId}>Booking ID: {item.booking_id}</Text>
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => handleDeleteBooking(item)}
-          >
-            <Ionicons name="trash-outline" size={24} color="#ff4444" />
-          </TouchableOpacity>
+          <Text style={styles.bookingId}>Booking #{item.booking_id}</Text>
+        </View>
+        <View style={styles.bookingHeader}>
+        <Text style={styles.dateText}>{bookingDate}</Text>
         </View>
 
-        <View style={styles.routeContainer}>
-          <View style={styles.routeInfo}>
-            <Text style={styles.label}>From</Text>
-            <Text style={styles.value}>{item.origin}</Text>
+        {/* Train ID */}
+        <View style={styles.trainIdContainer}>
+          <Text style={styles.trainIdLabel}>Train ID:</Text>
+          <Text style={styles.trainIdValue}>{item.train_id}</Text>
+        </View>
+
+        {/* Journey Details */}
+        <View style={styles.journeyContainer}>
+          <View style={styles.stationContainer}>
+            <View style={styles.stationDot} />
+            <View style={styles.stationInfo}>
+              <Text style={styles.stationLabel}>From</Text>
+              <Text style={styles.stationName}>{item.origin}</Text>
+              
+            </View>
           </View>
-          <View style={styles.routeInfo}>
-            <Text style={styles.label}>To</Text>
-            <Text style={styles.value}>{item.destination}</Text>
+          
+         {/* <View style={styles.journeyLine} /> */}
+          
+          <View style={styles.stationContainer}>
+            <View style={[styles.stationDot, styles.destinationDot]} />
+            <View style={styles.stationInfo}>
+              <Text style={styles.stationLabel}>To</Text>
+              <Text style={styles.stationName}>{item.destination}</Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.detailsContainer}>
-          <View style={styles.detailItem}>
-            <Text style={styles.label}>Train ID</Text>
-            <Text style={styles.value}>{item.train_id}</Text>
-          </View>
-          <View style={styles.detailItem}>
-            <Text style={styles.label}>Date</Text>
-            <Text style={styles.value}>
-              {new Date(item.booking_date).toLocaleDateString()}
-            </Text>
-          </View>
-        </View>
+        {/* Cancel Button */}
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => handleDeleteBooking(item)}
+        >
+          <Feather name="x-circle" size={16} color="#ff4444" style={styles.cancelIcon} />
+          <Text style={styles.cancelButtonText}>Cancel Ticket</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -137,105 +163,186 @@ export default function MyBookings() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#0066cc" />
+        <ActivityIndicator size="large" color="#4a90e2" />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>My Bookings</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.title}>My Bookings</Text>
+        <Text style={styles.subtitle}>Manage your train tickets</Text>
+      </View>
+
       <FlatList
         data={bookings}
         renderItem={renderBooking}
-        keyExtractor={item => item.booking_id}
+        keyExtractor={item => item.booking_id.toString()}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>No bookings found</Text>
+          <View style={styles.emptyContainer}>
+            <Feather name="calendar" size={40} color="#ccc" />
+            <Text style={styles.emptyText}>No bookings found</Text>
+            <Text style={styles.emptySubtext}>Your booked tickets will appear here</Text>
+          </View>
         }
         refreshing={loading}
         onRefresh={fetchBookings}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
+    backgroundColor: '#f4f6f9',
+  },
+  headerContainer: {
+    padding: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#888',
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    marginTop: 40,
-  },
   listContainer: {
-    paddingBottom: 20,
+    padding: 16,
   },
   bookingCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 12,
     padding: 16,
-    marginBottom: 16,
-    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  statusBanner: {
+    padding: 6,
+    alignItems: 'center',
+    borderRadius: 4,
+    marginBottom: 10,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   bookingHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   bookingId: {
-    fontSize: 14,
-    color: '#666',
-  },
-  status: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  routeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  routeInfo: {
-    flex: 1,
-  },
-  detailsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  detailItem: {
-    flex: 1,
-  },
-  label: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 4,
-  },
-  value: {
     fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  dateText: {
+    fontSize: 12,
+    color: '#777',
+  },
+  trainIdContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e7f3fe',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+  },
+  trainIdLabel: {
+    fontSize: 12,
+    color: '#4a90e2',
+    marginRight: 4,
+  },
+  trainIdValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1a1a1a',
+  },
+  journeyContainer: {
+    paddingVertical: 8,
+  },
+  stationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 4,
+  },
+  stationDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#4a90e2',
+    marginRight: 10,
+  },
+  destinationDot: {
+    backgroundColor: '#2e7d32',
+  },
+  journeyLine: {
+    width: 2,
+    height: 16,
+    backgroundColor: '#dcdcdc',
+    marginLeft: 15,
+  },
+  stationInfo: {
+    flex: 1,
+  },
+  stationLabel: {
+    fontSize: 12,
+    color: '#777',
+  },
+  stationName: {
+    fontSize: 15,
     color: '#333',
     fontWeight: '500',
   },
+  cancelButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    backgroundColor: '#ffebeb',
+    borderRadius: 4,
+    marginTop: 10,
+  },
+  cancelIcon: {
+    marginRight: 6,
+  },
+  cancelButtonText: {
+    color: '#ff4444',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+  },
   emptyText: {
-    textAlign: 'center',
-    color: '#666',
     fontSize: 16,
-    marginTop: 20,
+    color: '#666',
+    marginTop: 16,
   },
-  deleteButton: {
-    marginLeft: 10,
+  emptySubtext: {
+    fontSize: 13,
+    color: '#999',
   },
-}); 
+});
