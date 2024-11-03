@@ -42,11 +42,27 @@ const bookNow = (item) => {
     }
     setLoading(false);
   };
+  // const trainDetails = async (item) => {
+  //   const { data, error } = await supabase.rpc('get_train_details', {
+  //     train_id: item.train_id,
+  //     train_name: item.train_name,
+  //     train_type: item.train_type,
+  //     train_stationid: item.train_station_id,
+  //     train_fare: item.train_fare
+  //   });
 
+  //   if (error) {
+  //     console.error('Error fetching train details:', error.message);
+  //   } else {
+  //     console.log('Train details fetched successfully:', data);
+  //   }
+  // }
   const renderTrainItem = ({ item }) => (
-    <TouchableOpacity style={styles.trainCard} onPress={() => router.push('./booking')}>
+    <TouchableOpacity style={styles.trainCard} onPress={() => router.push('/screens/booking')}>
       <View style={styles.trainHeader}>
         <Text style={styles.trainId}>{item.train_id}</Text>
+        <Text style={styles.trainId}>{item.no_seats}</Text>
+
         <Text style={styles.trainDuration}>{item.route_duration} hrs</Text>
       </View>
       <View style={styles.trainRoute}>
@@ -56,6 +72,7 @@ const bookNow = (item) => {
       </View>
       <View style={styles.trainFooter}>
         <Text style={styles.trainDistance}>{item.distance} km</Text>
+        <Text style={styles.trainDistance}>{item.fare} rs</Text>
         <TouchableOpacity style={styles.bookButton}>
           <Text style={styles.bookButtonText} onPress={() => bookNow(item)} >Book Now</Text>
         </TouchableOpacity>

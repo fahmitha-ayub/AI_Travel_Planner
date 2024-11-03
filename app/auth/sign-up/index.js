@@ -4,6 +4,7 @@ import { useRouter, useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../configs/FirebaseConfig';
+import { supabase } from '../../supabaseClient';
 
 const { width } = Dimensions.get('window');
 
@@ -13,26 +14,43 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, []);
 
-  const onCreateAccount = () => {
+  const onCreateAccount = async () => {
     if (!email || !password || !fullName) {
       // Show error message
       return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user);
-        router.replace('/screens/homeScreen');
-      })
-      .catch((error) => {
-        console.log(error.message, error.code);
+    try {
+      // First, create the user in Supabase
+      const { data, error } = await supabase.rpc('create_new_user', {
+        p_fullname: fullName,
+        p_email: email,
+        p_phone: phone,
+        p_address: address
       });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        return;
+      }
+
+      // Then, create the user in Firebase
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log('Firebase user:', user);
+      
+      router.replace('/screens/homeScreen');
+    } catch (error) {
+      console.error('Error in account creation:', error);
+    }
   };
 
   return (
@@ -75,6 +93,26 @@ export default function SignUp() {
             value={password}
             secureTextEntry
             placeholder="Password"
+            placeholderTextColor="#aaa"
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            onChangeText={setPhone}
+            value={phone}
+            secureTextEntry
+            placeholder="Mobile Number"
+            placeholderTextColor="#aaa"
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            onChangeText={setAddress}
+            value={address}
+            secureTextEntry
+            placeholder="Address"
             placeholderTextColor="#aaa"
           />
         </View>

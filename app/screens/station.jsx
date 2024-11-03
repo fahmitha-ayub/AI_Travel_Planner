@@ -66,6 +66,9 @@ export default function Stations() {
       <View style={styles.stationDetails}>
         <Text style={styles.stationName}>{item.station_name}</Text>
         <Text style={styles.stateText}>{item.state}</Text>
+        <Text style={styles.stateText}>{item.zone}</Text>
+        <Text style={styles.stationName}>{item.platform}</Text>
+        <Text style={styles.stateText}>{item.facilities}</Text>
       </View>
     </View>
   );
