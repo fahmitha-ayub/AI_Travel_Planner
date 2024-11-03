@@ -133,19 +133,23 @@ export default function MyBookings() {
             <View style={styles.stationInfo}>
               <Text style={styles.stationLabel}>From</Text>
               <Text style={styles.stationName}>{item.origin}</Text>
-              
             </View>
-          </View>
-          
-         {/* <View style={styles.journeyLine} /> */}
-          
-          <View style={styles.stationContainer}>
             <View style={[styles.stationDot, styles.destinationDot]} />
             <View style={styles.stationInfo}>
               <Text style={styles.stationLabel}>To</Text>
               <Text style={styles.stationName}>{item.destination}</Text>
             </View>
           </View>
+          
+         {/* <View style={styles.journeyLine} /> */}
+          
+          {/* <View style={styles.stationContainer}>
+            <View style={[styles.stationDot, styles.destinationDot]} />
+            <View style={styles.stationInfo}>
+              <Text style={styles.stationLabel}>To</Text>
+              <Text style={styles.stationName}>{item.destination}</Text>
+            </View>
+          </View> */}
         </View>
 
         {/* Cancel Button */}
