@@ -1,50 +1,81 @@
-# Welcome to your Expo app 👋
+# Welcome to My Train Schedule Planner
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Get started
+Train Schedule Planner is a React Native app built with Expo, designed to simplify train travel planning. With features like searching for trains and stations, booking seats, and real-time seat availability updates, the app provides a seamless travel experience.
 
-1. Install dependencies
+#Features
 
-   ```bash
-   npm install
-   ```
+User Authentication: Firebase Authentication ensures secure login and registration.
 
-2. Start the app
+Search Functionality: Easily search for trains and stations based on user input.
 
-   ```bash
-    npx expo start
-   ```
+Seat Booking: Book train seats effortlessly, with automatic updates to seat availability.
 
-In the output, you'll find options to open the app in a
+Real-Time Updates: On booking, the number of available seats decreases in real time, ensuring accurate information for all users.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+#Tech Stack
 
-## Get a fresh project
+Frontend: React Native (Expo)
 
-When you're ready, run:
+Backend: Supabase for data management
 
-```bash
-npm run reset-project
-```
+Authentication: Firebase Authentication
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## Learn more
+#Installation
 
-To learn more about developing your project with Expo, look at the following resources:
+1. Clone the repository:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+git clone https://github.com/<YourUsername>/train-schedule-planner.git  
+cd train-schedule-planner
 
-## Join the community
 
-Join our community of developers creating universal apps.
+2. Install dependencies:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+npm install
+
+
+3. Configure Firebase:
+
+Add your Firebase project configuration to your app.
+
+
+
+4. Configure Supabase:
+
+Set up your Supabase instance and update the connection details in the project.
+
+
+
+5. Start the app:
+
+expo start
+
+
+
+#How It Works
+
+1. Authentication: Users can sign up or log in securely with Firebase Authentication.
+
+
+2. Train Search: Users can input origin and destination details to find relevant trains and stations.
+
+
+3. Booking: Select a train, pick available seats, and confirm your booking.
+
+
+4. Live Updates: Booked seats are dynamically updated in the database, reflecting real-time availability.
+
+
+
+#Future Enhancements
+
+Add payment gateway integration for bookings.
+
+Enable push notifications for booking reminders.
+
+Improve UI/UX for a more intuitive experience.
+
+
+
